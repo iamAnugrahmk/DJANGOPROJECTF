@@ -1,0 +1,46 @@
+ git add .
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git commit
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean        
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git commit -m 'third commit'
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git push -u origin main
+branch 'main' set up to track 'origin/main'.
+Everything up-to-date
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git remote -v
+origin  https://github.com/iamAnugrahmk/DJANGOPROJECTF.git (fetch)
+origin  https://github.com/iamAnugrahmk/DJANGOPROJECTF.git (push)
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git add .
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git commit -m 'third commit'
+[main 4619021] third commit
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+software@DESKTOP-0UJFVU9 MINGW64 ~/Desktop/DJANGOPROJECTF (main)
+$ git push -u origin main
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 855 bytes | 427.00 KiB/s, done.
+Total 7 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/iamAnugrahmk/DJANGOPROJECTF.git
+   1039cc8..4619021  main -> main
+branch 'main' set up to track 'origin/main'.
