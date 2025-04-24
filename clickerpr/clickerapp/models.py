@@ -9,12 +9,13 @@ class Click(models.Model):
         User, related_name="clicks",
         on_delete=models.DO_NOTHING
     )
+
     body = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} ({self.created_at:%y-%m-%d %H:%M}): {self.body}..."
-
+        
 
 # usr profile mdl
 

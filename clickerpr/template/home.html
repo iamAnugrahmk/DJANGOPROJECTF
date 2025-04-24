@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>welcome to twitter clone </h1>
+<h1>Welcome to Twitter Clone</h1>
+
+{% for click in clicks %}
+    <div class="alert alert-dark" role="alert">
+        {{ click }}
+  </div><br/><br/>
+{% endfor %}
 {% endblock %}

@@ -7,11 +7,18 @@
             <!-- Left Column (Profile Info) -->
             <div class="col-md-8 text-center">
                 <h1>{{ profile.user.username }}'s profile.</h1>
-                <p><a href="{% url 'profile' profile.user.id %}">@{{ profile.user.username }}</a></p>
+                <!-- <p><a href="{% url 'profile' profile.user.id %}">@{{ profile.user.username }}</a></p> -->
             </div>
-              
+              {% if clicks %}
+              {% for click in clicks %}
+                <div class="alert alert-dark" role="alert">
+                    {{ click }}
+                </div><br/><br/>
+              {% endfor %}
+              {% endif %}
             <!-- Right Column (Follow/Followed by) -->
             <div class="col-md-4">
+                <br/><br/><br/>
                 <!-- Follow List -->
                 <div class="card mb-3">
                     <h5 class="card-header">Follow</h5>
