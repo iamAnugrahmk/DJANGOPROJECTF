@@ -1,40 +1,60 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.models import User
 from .models import Profile, Click
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def home(request):
-    if request.user.is_authenticated:
-       clicks = Click.objects.all().order_by('-created_at')
+    clicks = Click.objects.filter(user=request.user).order_by('-created_at') if request.user.is_authenticated else []
     return render(request, 'home.html', {"clicks": clicks})
-
 
 def profile_list(request):
     if request.user.is_authenticated:
-        profiles = Profile.objects.exclude(user =request.user) 
-        return render(request, 'profile_list.html',{"profiles": profiles})
+        profiles = Profile.objects.exclude(user=request.user)
+        return render(request, 'profile_list.html', {"profiles": profiles})
     else:
-        messages.success(request,("you must be logged.."))
+        messages.error(request, ("You must be logged in to view profiles."))
         return redirect('home')
-    
-def profile(request,pk):
-    
+
+def logged_out(request):
+    return render(request, 'logged_out.html')
+
+def profile(request, pk):
     if request.user.is_authenticated:
-        profile = Profile.objects.get(user_id=pk)
+        profile = get_object_or_404(Profile, user_id=pk)
         clicks = Click.objects.filter(user_id=pk)
-        #post from logic
+        
+        # Handle follow/unfollow action
         if request.method == "POST":
-            #get currentuser
             current_user_profile = request.user.profile
             action = request.POST['follow']
-            # follow or un follow
             if action == "unfollow":
                 current_user_profile.follows.remove(profile)
-            elif action =="follow" :
+            elif action == "follow":
                 current_user_profile.follows.add(profile)
-            # save currentprofl
             current_user_profile.save()
-        return render(request,"profile.html",{"profile":profile,"clicks":clicks})
+        
+        return render(request, "profile.html", {"profile": profile, "clicks": clicks})
+
     else:
-         messages.success(request,("you must be logged.."))
-         return redirect('home')
+        messages.success(request, ("You must be logged in to view this profile."))
+        return redirect('home')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Your account has been created successfully!")
+            return redirect('home')
+        else:
+            messages.error(request, "There was an error with your registration. Please try again.")
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'register.html', {'form': form})
