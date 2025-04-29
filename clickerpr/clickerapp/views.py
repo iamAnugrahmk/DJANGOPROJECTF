@@ -5,11 +5,27 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from .models import Profile, Click
 from django.shortcuts import get_object_or_404
+from .forms import clickForm
+
 
 # Create your views here.
 def home(request):
-    clicks = Click.objects.filter(user=request.user).order_by('-created_at') if request.user.is_authenticated else []
-    return render(request, 'home.html', {"clicks": clicks})
+    if request.user.is_authenticated:
+        form = clickForm(request.POST or None)
+        if request.method == 'POST':
+            if form.is_valid():
+                click = form.save(commit=False)
+                click.user = request.user
+                click.save()
+                messages.success(request, "Click is added..")
+                return redirect('home')
+
+        clicks = Click.objects.all().order_by('-created_at')
+        return render(request, 'home.html', {"clicks": clicks, "form": form})
+    else:
+        clicks = Click.objects.all().order_by('-created_at')
+        return render(request, 'home.html', {"clicks": clicks})
+
 
 def profile_list(request):
     if request.user.is_authenticated:

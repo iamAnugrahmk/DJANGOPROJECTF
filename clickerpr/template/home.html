@@ -1,11 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome to Twitter Clone</h1>
+<div class="container">
+  <div class="row">
+    <!-- Left Column: Clicks -->
+    <div class="col-md-8">
+      <h1 class="text-center">Welcome to Twitter Clone</h1>
 
-{% for click in clicks %}
-    <div class="alert alert-dark" role="alert">
-        {{ click }}
-  </div><br/><br/>
-{% endfor %}
+      {% for click in clicks %}
+        <div class="alert alert-dark" role="alert">
+          {{ click.body }}
+          <small class="text-muted">
+            ({{ click.created_at }}) By <br/>
+            @{% if click.user %}{{ click.user.username }}{% else %}Anonymous{% endif %}
+          </small>          
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Right Column: Form (like Follow list) -->
+    <div class="col-md-4">
+      {% if form %}
+        <form method="POST" class="card p-3 shadow-sm">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-secondary w-100 mt-2">Click..</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
