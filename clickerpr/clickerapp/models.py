@@ -25,12 +25,15 @@ class Profile(models.Model):
                                      related_name="followed_by",
                                      symmetrical=False,
                                      blank=True)
-    date_modified = models.DateTimeField(User, auto_now=True)
+    # date_modified = models.DateTimeField(User, auto_now=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    profile_image = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
     def __str__(self):
         return self.user.username
 
 # profile wn new user sinup
-# @receiver(post_save, sender=User)
+@receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
         user_profile = Profile(user=instance)

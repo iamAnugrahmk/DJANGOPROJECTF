@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_profile_image">Profile Image</label>
+        {{ form.profile_image }}
+    </div>
+    <br/>
+    <div class="form-group">
+        <label for="id_bio">Bio</label>
+        {{ form.bio }}
+        <small class="form-text text-muted">Maximum 160 characters.</small>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+  </form>
+{% endblock %}

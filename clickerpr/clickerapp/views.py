@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from .models import Profile, Click
 from django.shortcuts import get_object_or_404
-from .forms import clickForm
+from .forms import clickForm, ProfileUpdateForm
 
 
 # Create your views here.
@@ -74,3 +74,15 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, 'register.html', {'form': form})
+
+
+def update_profile(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('profile', pk=request.user.id)
+    else:
+        form = ProfileUpdateForm(instance=request.user.profile)
+    return render(request, 'profile_update.html', {'form': form})
