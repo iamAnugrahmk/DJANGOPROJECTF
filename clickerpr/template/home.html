@@ -10,45 +10,63 @@
 
       {% if user.is_authenticated %}
       {% for click in clicks %}
-        <div class="alert alert-dark d-flex align-items-center justify-content-between" role="alert">
-          <!-- Small Profile Picture -->
-          <a href="{% url 'profile' click.user.id %}">
-            {% if click.user.profile.profile_image %}
-              <img src="{{ click.user.profile.profile_image.url }}" alt="Profile Image" 
-                   class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
-            {% else %}
-              <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image" 
-                   class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+        <div class="alert alert-dark position-relative" role="alert">
+          <!-- Top Section: Profile Picture, Time, and Edit/Delete Icons -->
+          <div class="d-flex align-items-center mb-2">
+            <!-- Small Profile Picture -->
+            <a href="{% url 'profile' click.user.id %}">
+              {% if click.user.profile.profile_image %}
+                <img src="{{ click.user.profile.profile_image.url }}" alt="Profile Image" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% else %}
+                <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% endif %}
+            </a>
+            <!-- Time -->
+            <small class="text-muted">
+              ({{ click.created_at }}) By <a href="{% url 'profile' click.user.id %}">@{{ click.user.username }}</a>
+            </small>
+
+            <!-- Edit and Delete Icons -->
+            {% if click.user == user %}
+            <div class="position-absolute top-0 end-0">
+              <a href="{% url 'edit_click' click.id %}" title="Edit" class="me-2" style="cursor: pointer;">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <a href="{% url 'delete_click' click.id %}" title="Delete" style="cursor: pointer;">
+                <i class="bi bi-trash"></i>
+              </a>
+            </div>
             {% endif %}
-          </a>
+          </div>
 
           <!-- Click Message -->
           <div>
-            {{ click.body }}
-            <small class="text-muted">
-              ({{ click.created_at }}) By <br/>
-              <a href="{% url 'profile' click.user.id %}">@{{ click.user.username }}</a>
-            </small>
+            <p>{{ click.body }}</p>
+            {% if click.image %}
+              <div class="mt-2">
+                <img src="{{ click.image.url }}" alt="Click Image" class="img-fluid rounded" style="max-width: 100%; height: auto;">
+              </div>
+            {% endif %}
           </div>
 
           <!-- Like and Dislike Buttons -->
-          <!-- Like and Dislike Buttons -->
-<div class="ms-auto">
-  <form method="POST" action="{% url 'like_click' click.id %}" class="d-inline">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-outline-success {% if user in click.liked_by.all %}active{% endif %}">
-      <i class="bi bi-hand-thumbs-up"></i> ({{ click.likes }})
-    </button>
-  </form>
+          <div class="mt-3 d-flex justify-content-start">
+            <form method="POST" action="{% url 'like_click' click.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-success {% if user in click.liked_by.all %}active{% endif %}">
+                <i class="bi bi-hand-thumbs-up"></i> ({{ click.likes }})
+              </button>
+            </form>
 
-  <form method="POST" action="{% url 'dislike_click' click.id %}" class="d-inline ms-2">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-outline-danger {% if user in click.disliked_by.all %}active{% endif %}">
-      <i class="bi bi-hand-thumbs-down"></i> ({{ click.dislikes }})
-    </button>
-  </form>
-</div>
-
+            <form method="POST" action="{% url 'dislike_click' click.id %}" class="d-inline ms-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger {% if user in click.disliked_by.all %}active{% endif %}">
+                <i class="bi bi-hand-thumbs-down"></i> ({{ click.dislikes }})
+              </button>
+            </form>
+          </div>
         </div>
       {% endfor %}
       {% endif %}
@@ -57,9 +75,15 @@
     <!-- Right Column: Form (like Follow list) -->
     <div class="col-md-4">
       {% if form %}
-      <form method="POST" class="card p-3 shadow-sm">
+      <form method="POST" enctype="multipart/form-data" class="card p-3 shadow-sm">
         {% csrf_token %}
         {{ form.body }}
+        <div class="mb-3">
+          <label for="id_image" class="form-label">
+            <i class="bi bi-plus-circle"></i> Add Image
+          </label>
+          {{ form.image }}
+        </div>
         <small id="clickCharCount" class="form-text text-muted">200 characters remaining</small>
         <button type="submit" class="btn btn-secondary w-100 mt-2">Click..</button>
       </form>

@@ -18,4 +18,6 @@ urlpatterns = [
      path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
      path('click/<int:click_id>/like/', views.like_click, name='like_click'),
      path('click/<int:click_id>/dislike/', views.dislike_click, name='dislike_click'),
+     path('click/<int:pk>/edit/', views.edit_click, name='edit_click'),
+     path('click/<int:pk>/delete/', views.delete_click, name='delete_click'),
 ]

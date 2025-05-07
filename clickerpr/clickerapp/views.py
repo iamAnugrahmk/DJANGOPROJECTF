@@ -11,7 +11,7 @@ from .forms import ClickForm, ProfileUpdateForm
 # Create your views here.
 def home(request):
     if request.method == 'POST':
-        form = ClickForm(request.POST)
+        form = ClickForm(request.POST, request.FILES)  # Include request.FILES for file uploads
         if form.is_valid():
             click = form.save(commit=False)
             click.user = request.user  # Associate the click with the logged-in user
@@ -111,6 +111,25 @@ def dislike_click(request, click_id):
     click.save()
     return redirect('home')
 
+@login_required
+def edit_click(request, pk):
+    click = get_object_or_404(Click, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ClickForm(request.POST, request.FILES, instance=click)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = ClickForm(instance=click)
+    return render(request, 'edit_click.html', {'form': form})
+
+@login_required
+def delete_click(request, pk):
+    click = get_object_or_404(Click, pk=pk, user=request.user)
+    if request.method == 'POST':
+        click.delete()
+        return redirect('home')
+    return render(request, 'delete_click.html', {'click': click})
 
 def register(request):
     if request.method == 'POST':
