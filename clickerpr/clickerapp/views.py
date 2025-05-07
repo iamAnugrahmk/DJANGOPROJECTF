@@ -1,30 +1,27 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Profile, Click
-from django.shortcuts import get_object_or_404
-from .forms import clickForm, ProfileUpdateForm
+from .forms import ClickForm, ProfileUpdateForm
 
 
 # Create your views here.
 def home(request):
-    if request.user.is_authenticated:
-        form = clickForm(request.POST or None)
-        if request.method == 'POST':
-            if form.is_valid():
-                click = form.save(commit=False)
-                click.user = request.user
-                click.save()
-                messages.success(request, "Click is added..")
-                return redirect('home')
-
-        clicks = Click.objects.all().order_by('-created_at')
-        return render(request, 'home.html', {"clicks": clicks, "form": form})
+    if request.method == 'POST':
+        form = ClickForm(request.POST)
+        if form.is_valid():
+            click = form.save(commit=False)
+            click.user = request.user  # Associate the click with the logged-in user
+            click.save()
+            return redirect('home')  # Redirect to the home page after posting
     else:
-        clicks = Click.objects.all().order_by('-created_at')
-        return render(request, 'home.html', {"clicks": clicks})
+        form = ClickForm()
+
+    clicks = Click.objects.all().order_by('-created_at')  # Fetch all clicks
+    return render(request, 'home.html', {'form': form, 'clicks': clicks})
 
 
 def profile_list(request):
@@ -40,24 +37,79 @@ def logged_out(request):
 
 def profile(request, pk):
     if request.user.is_authenticated:
+        # Get the profile object for the given pk (primary key)
         profile = get_object_or_404(Profile, user_id=pk)
-        clicks = Click.objects.filter(user_id=pk)
-        
-        # Handle follow/unfollow action
+
+        # Fetch the clicks for the given profile (user)
+        clicks = Click.objects.filter(user_id=pk).order_by('-created_at')
+
+        # Handle follow/unfollow action on POST request
         if request.method == "POST":
             current_user_profile = request.user.profile
-            action = request.POST['follow']
+            action = request.POST.get('follow')  # Use `.get` to avoid KeyError
             if action == "unfollow":
                 current_user_profile.follows.remove(profile)
             elif action == "follow":
                 current_user_profile.follows.add(profile)
             current_user_profile.save()
-        
-        return render(request, "profile.html", {"profile": profile, "clicks": clicks})
+
+        # Return the context to the profile page
+        context = {
+            "profile": profile,
+            "clicks": clicks,
+        }
+        return render(request, "profile.html", context)  # Ensure this line returns HttpResponse
 
     else:
-        messages.success(request, ("You must be logged in to view this profile."))
+        # If the user is not authenticated, show an error and redirect
+        messages.error(request, "You must be logged in to view this profile.")
+        return redirect('home')  # Ensure a redirect or response is returned
+
+def like_click(request, click_id):
+    click = get_object_or_404(Click, id=click_id)
+
+    if request.user == click.user:
+        messages.warning(request, "You cannot like your own Click.")
         return redirect('home')
+
+    if request.user in click.liked_by.all():
+        # Toggle off like
+        click.liked_by.remove(request.user)
+        click.likes -= 1
+    else:
+        # Add like
+        click.liked_by.add(request.user)
+        click.likes += 1
+        # Remove dislike if previously disliked
+        if request.user in click.disliked_by.all():
+            click.disliked_by.remove(request.user)
+            click.dislikes -= 1
+
+    click.save()
+    return redirect('home')
+
+def dislike_click(request, click_id):
+    click = get_object_or_404(Click, id=click_id)
+
+    if request.user == click.user:
+        messages.warning(request, "You cannot dislike your own Click.")
+        return redirect('home')
+
+    if request.user in click.disliked_by.all():
+        # Toggle off dislike
+        click.disliked_by.remove(request.user)
+        click.dislikes -= 1
+    else:
+        # Add dislike
+        click.disliked_by.add(request.user)
+        click.dislikes += 1
+        # Remove like if previously liked
+        if request.user in click.liked_by.all():
+            click.liked_by.remove(request.user)
+            click.likes -= 1
+
+    click.save()
+    return redirect('home')
 
 
 def register(request):

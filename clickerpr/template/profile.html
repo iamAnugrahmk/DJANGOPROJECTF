@@ -11,12 +11,26 @@
             <!-- Optional Click Alerts -->
             {% if clicks %}
                 {% for click in clicks %}
-                    <div class="alert alert-dark" role="alert">
-                        {{ click.body }}
-                     <small class="text-muted">
-                       ({{ click.created_at}}) By <br/>
-                        @{{click.user.username}}
-                     </small>
+                    <div class="alert alert-dark d-flex align-items-center" role="alert">
+                        <!-- Profile Picture of the User Who Sent the Click -->
+                        <a href="{% url 'profile' click.user.id %}">
+                            {% if click.user.profile.profile_image %}
+                                <img src="{{ click.user.profile.profile_image.url }}" alt="Profile Image" 
+                                     class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image" 
+                                     class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                            {% endif %}
+                        </a>
+                        
+                        <!-- Click Message -->
+                        <div>
+                            {{ click.body }}
+                            <small class="text-muted d-block">
+                                ({{ click.created_at }}) By <br/>
+                                @{{ click.user.username }}
+                            </small>
+                        </div>
                     </div>
                     <br/><br/>
                 {% endfor %}

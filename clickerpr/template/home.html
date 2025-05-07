@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container">
@@ -9,12 +10,45 @@
 
       {% if user.is_authenticated %}
       {% for click in clicks %}
-        <div class="alert alert-dark" role="alert">
-          {{ click.body }}
-          <small class="text-muted">
-            ({{ click.created_at }}) By <br/>
-            @{% if click.user %}{{ click.user.username }}{% else %}Anonymous{% endif %}
-          </small>          
+        <div class="alert alert-dark d-flex align-items-center justify-content-between" role="alert">
+          <!-- Small Profile Picture -->
+          <a href="{% url 'profile' click.user.id %}">
+            {% if click.user.profile.profile_image %}
+              <img src="{{ click.user.profile.profile_image.url }}" alt="Profile Image" 
+                   class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+            {% else %}
+              <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image" 
+                   class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+            {% endif %}
+          </a>
+
+          <!-- Click Message -->
+          <div>
+            {{ click.body }}
+            <small class="text-muted">
+              ({{ click.created_at }}) By <br/>
+              <a href="{% url 'profile' click.user.id %}">@{{ click.user.username }}</a>
+            </small>
+          </div>
+
+          <!-- Like and Dislike Buttons -->
+          <!-- Like and Dislike Buttons -->
+<div class="ms-auto">
+  <form method="POST" action="{% url 'like_click' click.id %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-success {% if user in click.liked_by.all %}active{% endif %}">
+      <i class="bi bi-hand-thumbs-up"></i> ({{ click.likes }})
+    </button>
+  </form>
+
+  <form method="POST" action="{% url 'dislike_click' click.id %}" class="d-inline ms-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger {% if user in click.disliked_by.all %}active{% endif %}">
+      <i class="bi bi-hand-thumbs-down"></i> ({{ click.dislikes }})
+    </button>
+  </form>
+</div>
+
         </div>
       {% endfor %}
       {% endif %}
@@ -23,11 +57,12 @@
     <!-- Right Column: Form (like Follow list) -->
     <div class="col-md-4">
       {% if form %}
-        <form method="POST" class="card p-3 shadow-sm">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-secondary w-100 mt-2">Click..</button>
-        </form>
+      <form method="POST" class="card p-3 shadow-sm">
+        {% csrf_token %}
+        {{ form.body }}
+        <small id="clickCharCount" class="form-text text-muted">200 characters remaining</small>
+        <button type="submit" class="btn btn-secondary w-100 mt-2">Click..</button>
+      </form>
       {% endif %}
     </div>
   </div>

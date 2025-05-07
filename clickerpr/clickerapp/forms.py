@@ -1,20 +1,13 @@
 from django import forms
 from .models import Click, Profile
 
-class clickForm(forms.ModelForm):
-    body = forms.CharField(
-        required=True,
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Click here to add a click message',
-            'class': 'form-control',
-            'rows': 3,
-        }),
-        label="",
-    )
-
+class ClickForm(forms.ModelForm):
     class Meta:
         model = Click
-        exclude = ('user',)
+        fields = ['body']  # Include only the 'body' field for the form
+        widgets = {
+            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message here...'}),
+        }
 
 # Add a form for updating the Profile model
 class ProfileUpdateForm(forms.ModelForm):
