@@ -51,7 +51,7 @@
             {% endif %}
           </div>
 
-          <!-- Like and Dislike Buttons -->
+          <!-- Like, Dislike, and Share Buttons -->
           <div class="mt-3 d-flex justify-content-start">
             <form method="POST" action="{% url 'like_click' click.id %}" class="d-inline">
               {% csrf_token %}
@@ -66,6 +66,44 @@
                 <i class="bi bi-hand-thumbs-down"></i> ({{ click.dislikes }})
               </button>
             </form>
+
+            <!-- Share Button -->
+            <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#shareModal{{ click.id }}">
+              <i class="bi bi-share"></i> Share
+            </button>
+          </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div class="modal fade" id="shareModal{{ click.id }}" tabindex="-1" aria-labelledby="shareModalLabel{{ click.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel{{ click.id }}">Share Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Share this post:</p>
+                <div class="d-flex justify-content-around">
+                  <!-- Copy Link -->
+                  <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ request.build_absolute_uri|slice:':-1' }}{% url 'post_detail' click.id %}')">
+                    <i class="bi bi-clipboard"></i> Copy Link
+                  </button>
+                  <!-- WhatsApp -->
+                  <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'post_detail' click.id %}" target="_blank" class="btn btn-outline-success">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                  </a>
+                  <!-- Gmail -->
+                  <a href="mailto:?subject=Check this post&body={{ request.build_absolute_uri|slice:':-1' }}{% url 'post_detail' click.id %}" target="_blank" class="btn btn-outline-danger">
+                    <i class="bi bi-envelope"></i> Gmail
+                  </a>
+                  <!-- Facebook -->
+                  <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'post_detail' click.id %}" target="_blank" class="btn btn-outline-primary">
+                    <i class="bi bi-facebook"></i> Facebook
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       {% endfor %}
@@ -91,4 +129,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Link copied to clipboard!');
+    });
+  }
+</script>
 {% endblock %}

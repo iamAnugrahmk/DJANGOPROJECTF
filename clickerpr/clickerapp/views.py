@@ -157,3 +157,11 @@ def update_profile(request):
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'profile_update.html', {'form': form})
+
+def post_detail(request, id):
+    if not request.user.is_authenticated:
+        messages.warning(request, "You must log in to see the click message.")
+        return redirect('login')  # Redirect to the login page if not authenticated
+
+    post = get_object_or_404(Click, id=id)
+    return render(request, 'post_detail.html', {'post': post})

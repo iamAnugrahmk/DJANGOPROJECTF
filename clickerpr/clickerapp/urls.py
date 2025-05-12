@@ -20,4 +20,5 @@ urlpatterns = [
      path('click/<int:click_id>/dislike/', views.dislike_click, name='dislike_click'),
      path('click/<int:pk>/edit/', views.edit_click, name='edit_click'),
      path('click/<int:pk>/delete/', views.delete_click, name='delete_click'),
+     path('post/<int:id>/', views.post_detail, name='post_detail'),
 ]
