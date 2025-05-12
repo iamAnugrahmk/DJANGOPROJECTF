@@ -56,7 +56,7 @@ class Profile(models.Model):
             img = Image.open(self.profile_image.path)
 
             # Resize to 400x400 px
-            img = img.resize((400, 400), Image.ANTIALIAS)
+            img = img.resize((400, 400), Image.Resampling.LANCZOS)
 
             # Circular crop
             mask = Image.new("L", img.size, 0)
