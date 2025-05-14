@@ -9,6 +9,7 @@ class Click(models.Model):
     user = models.ForeignKey(User, related_name="clicks", on_delete=models.CASCADE)
     body = models.CharField(max_length=200)
     image = models.ImageField(upload_to='click_images/', blank=True, null=True)
+    video = models.FileField(upload_to='click_videos/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.PositiveIntegerField(default=0)
     dislikes = models.PositiveIntegerField(default=0)

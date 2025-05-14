@@ -4,7 +4,7 @@ from .models import Click, Profile
 class ClickForm(forms.ModelForm):
     class Meta:
         model = Click
-        fields = ['body', 'image']  # Include the 'image' field
+        fields = ['body', 'image','video']  # Include the 'image' field
         widgets = {
             'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message here...'}),
         }

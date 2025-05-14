@@ -23,15 +23,42 @@
                             {% endif %}
                         </a>
                         
-                        <!-- Click Message -->
-                        <div>
-                            {{ click.body }}
+                       
+                        <!-- Click Message and Controls -->
+                        <div class="position-relative">
+                            <p>{{ click.body }}</p>
                             <small class="text-muted d-block">
-                                ({{ click.created_at }}) By <br/>
-                                @{{ click.user.username }}
+                                ({{ click.created_at }}) By @{{ click.user.username }}
                             </small>
+                            <!-- dhjgsdjhgsdhj -->
+                                {% if click.image %}
+                                    <div class="mt-2">
+                                        <img src="{{ click.image.url }}" alt="Click Image" class="img-fluid rounded" style="max-width: 100%; height: auto;">
+                                    </div>
+                                    {% endif %}
+                                    {% if click.video %}
+                                    <div class="mt-2">
+                                        <video controls width="100%" class="rounded">
+                                        <source src="{{ click.video.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                {% endif %}
+
+                            <!-- gfhghgfhjghjfgdjhaghfhj -->
+                            {% if click.user == user %}
+                            <div class="position-absolute top-0 end-0">
+                                <a href="{% url 'edit_click' click.id %}" title="Edit" class="me-2" style="cursor: pointer;">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="{% url 'delete_click' click.id %}" title="Delete" style="cursor: pointer;">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                            {% endif %}
                         </div>
-                    </div>
+                        
+                     </div>
                     <br/><br/>
                 {% endfor %}
             {% endif %}
