@@ -66,8 +66,12 @@ class Profile(models.Model):
             img.putalpha(mask)
 
             # Save the resized image
-            img.save(self.profile_image.path)
-
+            if img.mode == "RGBA":
+                background = Image.new("RGB", img.size, (255, 255, 255))  # white background
+                background.paste(img, mask=img.split()[3])  # use alpha channel as mask
+                background.save(self.profile_image.path)
+            else:
+                img.save(self.profile_image.path)
     def __str__(self):
         return self.user.username
 
