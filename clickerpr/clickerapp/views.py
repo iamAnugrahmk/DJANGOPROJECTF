@@ -166,29 +166,3 @@ def post_detail(request, id):
     post = get_object_or_404(Click, id=id)
     return render(request, 'post_detail.html', {'post': post})
 
-# email sending
-
-from django.core.mail import send_mail
-from django.conf import settings
-from django.shortcuts import render
-from django.contrib import messages
-
-def send_email(request):
-    if request.method == 'POST':
-        subject = request.POST.get('subject')
-        message = request.POST.get('message')
-        recipient = request.POST.get('email')  # Get the recipient email
-
-        try:
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,  # Sender's email
-                [recipient],                  # Recipient list
-                fail_silently=False,
-            )
-            messages.success(request, "Email sent successfully.")
-        except Exception as e:
-            messages.error(request, f"Failed to send email: {e}")
-
-    return render(request, 'send_email.html')
