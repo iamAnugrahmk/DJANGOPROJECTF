@@ -25,15 +25,15 @@ class Click(models.Model):
 
             # Resize for Square Post (1:1)
             if img.width == img.height:
-                img = img.resize((1080, 1080), Image.ANTIALIAS)
+                img = img.resize((1080, 1080), Image.Resampling.LANCZOS)
 
             # Resize for Landscape Post (1.91:1)
             elif img.width / img.height > 1.91:
-                img = img.resize((1200, 630), Image.ANTIALIAS)
+                img = img.resize((1200, 630), Image.Resampling.LANCZOS)
 
             # Resize for Stories / Reels (9:16)
             elif img.height / img.width > 1.78:
-                img = img.resize((1080, 1920), Image.ANTIALIAS)
+                img = img.resize((1080, 1920), Image.Resampling.LANCZOS)
 
             # Save the resized image
             img.save(self.image.path)
@@ -53,26 +53,13 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
         if self.profile_image:
             img = Image.open(self.profile_image.path)
-
-            # Resize to 400x400 px
-            img = img.resize((400, 400), Image.Resampling.LANCZOS)
-
-            # Circular crop
-            mask = Image.new("L", img.size, 0)
-            draw = ImageDraw.Draw(mask)
-            draw.ellipse((0, 0) + img.size, fill=255)
-            img.putalpha(mask)
-
-            # Save the resized image
-            if img.mode == "RGBA":
-                background = Image.new("RGB", img.size, (255, 255, 255))  # white background
-                background.paste(img, mask=img.split()[3])  # use alpha channel as mask
-                background.save(self.profile_image.path)
-            else:
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img = img.resize(output_size, Image.Resampling.LANCZOS)  # <-- updated here
                 img.save(self.profile_image.path)
+
     def __str__(self):
         return self.user.username
 

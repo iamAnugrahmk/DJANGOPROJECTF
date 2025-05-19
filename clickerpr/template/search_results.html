@@ -14,7 +14,7 @@
             <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
                  class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
           {% endif %}
-          @{{ profile.user.username }} (ID: {{ profile.user.id }})
+          @{{ profile.user.username }}
         </a>
       </li>
     {% empty %}
