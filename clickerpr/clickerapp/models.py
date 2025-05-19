@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import render
 # Create your models here.
 
 class Click(models.Model):
@@ -76,10 +77,12 @@ class Profile(models.Model):
         return self.user.username
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        user_profile = Profile(user=instance)
-        user_profile.save()
-        user_profile.follows.set([instance.profile.id])
-        user_profile.save()
-post_save.connect(create_profile, sender=User)
+        Profile.objects.create(user=instance)
+
+from .models import Profile
+
+def profile_list(request):
+    profiles = Profile.objects.all()
+    return render(request, 'profile_list.html', {'profiles': profiles})

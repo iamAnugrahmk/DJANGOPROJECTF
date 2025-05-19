@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Followers ({{ profile.followed_by.count }})</h2>
+    <ul class="list-unstyled">
+        {% for follower in profile.followed_by.all %}
+            <li class="mb-2 d-flex align-items-center">
+                <a href="{% url 'profile' follower.user.id %}" class="d-flex align-items-center text-decoration-none">
+                    {% if follower.profile_image %}
+                        <img src="{{ follower.profile_image.url }}" alt="Profile Image"
+                             class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
+                             class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    {% endif %}
+                    @{{ follower.user.username }}
+                </a>
+            </li>
+        {% empty %}
+            <li>No followers yet.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'profile' profile.user.id %}">Back to Profile</a>
+</div>
+{% endblock %}

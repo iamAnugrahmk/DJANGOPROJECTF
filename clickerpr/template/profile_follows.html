@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Following ({{ profile.follows.count }})</h2>
+    <ul class="list-unstyled">
+        {% for following in profile.follows.all %}
+            <li class="mb-2 d-flex align-items-center">
+                <a href="{% url 'profile' following.user.id %}" class="d-flex align-items-center text-decoration-none">
+                    {% if following.profile_image %}
+                        <img src="{{ following.profile_image.url }}" alt="Profile Image"
+                             class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
+                             class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    {% endif %}
+                    @{{ following.user.username }}
+                </a>
+            </li>
+        {% empty %}
+            <li>Not following anyone yet.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'profile' profile.user.id %}">Back to Profile</a>
+</div>
+{% endblock %}

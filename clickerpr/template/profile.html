@@ -121,13 +121,25 @@
             <div class="card mb-3">
                 <h5 class="card-header">Follow</h5>
                 <div class="card-body">
-                    {% for following in profile.follows.all %}
-                        <p class="card-text">
-                            <a href="{% url 'profile' following.user.id %}">@{{ following }}</a>
+                    {% for following in profile.follows.all|slice:":4" %}
+                        <p class="card-text d-flex align-items-center">
+                            <a href="{% url 'profile' following.user.id %}">
+                                {% if following.profile_image %}
+                                    <img src="{{ following.profile_image.url }}" alt="Profile Image"
+                                         class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
+                                         class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                {% endif %}
+                                @{{ following.user.username }} 
+                            </a>
                         </p>
                     {% empty %}
                         <p class="text-muted">Not following anyone yet.</p>
                     {% endfor %}
+                    {% if profile.follows.count > 4 %}
+                        <a href="{% url 'profile_follows' profile.user.id %}">More...</a>
+                    {% endif %}
                 </div>
             </div>
 
@@ -135,13 +147,25 @@
             <div class="card mb-3">
                 <h5 class="card-header">Followed by</h5>
                 <div class="card-body">
-                    {% for follower in profile.followed_by.all %}
-                        <p class="card-text">
-                            <a href="{% url 'profile' follower.user.id %}">@{{ follower }}</a>
+                    {% for follower in profile.followed_by.all|slice:":4" %}
+                        <p class="card-text d-flex align-items-center">
+                            <a href="{% url 'profile' follower.user.id %}">
+                                {% if follower.profile_image %}
+                                    <img src="{{ follower.profile_image.url }}" alt="Profile Image"
+                                         class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
+                                         class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                {% endif %}
+                                @{{ follower.user.username }} 
+                            </a>
                         </p>
                     {% empty %}
                         <p class="text-muted">No followers yet.</p>
                     {% endfor %}
+                    {% if profile.followed_by.count > 4 %}
+                        <a href="{% url 'profile_followers' profile.user.id %}">More...</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

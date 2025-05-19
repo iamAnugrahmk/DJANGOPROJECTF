@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Search Results{% if query %} for "{{ query }}"{% endif %}</h2>
+  <ul class="list-unstyled">
+    {% for profile in profiles %}
+      <li class="mb-2 d-flex align-items-center">
+        <a href="{% url 'profile' profile.user.id %}" class="d-flex align-items-center text-decoration-none">
+          {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" alt="Profile Image"
+                 class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+          {% else %}
+            <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Image"
+                 class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+          {% endif %}
+          @{{ profile.user.username }} (ID: {{ profile.user.id }})
+        </a>
+      </li>
+    {% empty %}
+      <li>No profiles found.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

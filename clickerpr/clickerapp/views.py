@@ -166,3 +166,24 @@ def post_detail(request, id):
     post = get_object_or_404(Click, id=id)
     return render(request, 'post_detail.html', {'post': post})
 
+
+
+def profile_follows(request, user_id):
+    profile = get_object_or_404(Profile, user__id=user_id)
+    return render(request, 'profile_follows.html', {'profile': profile})
+
+def profile_followers(request, user_id):
+    profile = get_object_or_404(Profile, user__id=user_id)
+    return render(request, 'profile_followers.html', {'profile': profile})
+
+# Search functionality
+
+def search_profiles(request):
+    query = request.GET.get('q', '')
+    profiles = []
+    if query:
+        if query.startswith('@'):
+            query = query[1:]
+        profiles = Profile.objects.filter(user__username__icontains=query)
+    return render(request, 'search_results.html', {'profiles': profiles, 'query': request.GET.get('q', '')})
+
