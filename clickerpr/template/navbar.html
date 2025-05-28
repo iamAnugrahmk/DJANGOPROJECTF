@@ -38,10 +38,12 @@
             {% endif %}
           </ul>
           <!-- Search -->
+           {% if user.is_authenticated %}
           <form class="d-flex me-3" role="search" method="get" action="{% url 'search_profiles' %}">
             <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search profiles" aria-label="Search">
             <button class="btn btn-outline-success btn-sm" type="submit">Search</button>
           </form>
+           {% endif %}
           <!-- Theme Toggle Button -->
           <button class="btn btn-outline-secondary btn-sm me-3" id="theme-toggle-btn">
             <i class="bi bi-sun" id="theme-icon"></i>
