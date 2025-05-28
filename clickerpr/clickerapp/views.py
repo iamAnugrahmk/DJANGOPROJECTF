@@ -11,16 +11,16 @@ from .forms import ClickForm, ProfileUpdateForm
 # Create your views here.
 def home(request):
     if request.method == 'POST':
-        form = ClickForm(request.POST, request.FILES)  # Include request.FILES for file uploads
+        form = ClickForm(request.POST, request.FILES)  # Include reqst.FILES for file uploads
         if form.is_valid():
             click = form.save(commit=False)
-            click.user = request.user  # Associate the click with the logged-in user
+            click.user = request.user  
             click.save()
-            return redirect('home')  # Redirect to the home page after posting
+            return redirect('home')  # Redirect 2 home 
     else:
         form = ClickForm()
 
-    clicks = Click.objects.all().order_by('-created_at')  # Fetch all clicks
+    clicks = Click.objects.all().order_by('-created_at') 
     return render(request, 'home.html', {'form': form, 'clicks': clicks})
 
 
@@ -58,12 +58,11 @@ def profile(request, pk):
             "profile": profile,
             "clicks": clicks,
         }
-        return render(request, "profile.html", context)  # Ensure this line returns HttpResponse
-
+        return render(request, "profile.html", context)  
     else:
-        # If the user is not authenticated, show an error and redirect
+
         messages.error(request, "You must be logged in to view this profile.")
-        return redirect('home')  # Ensure a redirect or response is returned
+        return redirect('home')  
 
 def like_click(request, click_id):
     click = get_object_or_404(Click, id=click_id)
@@ -73,14 +72,14 @@ def like_click(request, click_id):
         return redirect('home')
 
     if request.user in click.liked_by.all():
-        # Toggle off like
+        
         click.liked_by.remove(request.user)
         click.likes -= 1
     else:
-        # Add like
+       
         click.liked_by.add(request.user)
         click.likes += 1
-        # Remove dislike if previously disliked
+        
         if request.user in click.disliked_by.all():
             click.disliked_by.remove(request.user)
             click.dislikes -= 1
@@ -96,14 +95,14 @@ def dislike_click(request, click_id):
         return redirect('home')
 
     if request.user in click.disliked_by.all():
-        # Toggle off dislike
+        
         click.disliked_by.remove(request.user)
         click.dislikes -= 1
     else:
-        # Add dislike
+        
         click.disliked_by.add(request.user)
         click.dislikes += 1
-        # Remove like if previously liked
+        
         if request.user in click.liked_by.all():
             click.liked_by.remove(request.user)
             click.likes -= 1
@@ -161,7 +160,7 @@ def update_profile(request):
 def post_detail(request, id):
     if not request.user.is_authenticated:
         messages.warning(request, "You must log in to see the click message.")
-        return redirect('login')  # Redirect to the login page if not authenticated
+        return redirect('login') 
 
     post = get_object_or_404(Click, id=id)
     return render(request, 'post_detail.html', {'post': post})

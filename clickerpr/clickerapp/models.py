@@ -23,19 +23,19 @@ class Click(models.Model):
         if self.image:
             img = Image.open(self.image.path)
 
-            # Resize for Square Post (1:1)
+            
             if img.width == img.height:
                 img = img.resize((1080, 1080), Image.Resampling.LANCZOS)
 
-            # Resize for Landscape Post (1.91:1)
+            
             elif img.width / img.height > 1.91:
                 img = img.resize((1200, 630), Image.Resampling.LANCZOS)
 
-            # Resize for Stories / Reels (9:16)
+           
             elif img.height / img.width > 1.78:
                 img = img.resize((1080, 1920), Image.Resampling.LANCZOS)
 
-            # Save the resized image
+            # Save the rzed img
             img.save(self.image.path)
 
     def __str__(self):
@@ -57,7 +57,7 @@ class Profile(models.Model):
             img = Image.open(self.profile_image.path)
             if img.height > 300 or img.width > 300:
                 output_size = (300, 300)
-                img = img.resize(output_size, Image.Resampling.LANCZOS)  # <-- updated here
+                img = img.resize(output_size, Image.Resampling.LANCZOS) 
                 img.save(self.profile_image.path)
 
     def __str__(self):
