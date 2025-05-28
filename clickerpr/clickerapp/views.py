@@ -187,3 +187,10 @@ def search_profiles(request):
         profiles = Profile.objects.filter(user__username__icontains=query)
     return render(request, 'search_results.html', {'profiles': profiles, 'query': request.GET.get('q', '')})
 
+
+
+
+def some_view(request):
+    if invalid_action_condition:
+        return render(request, 'invalid_action.html')
+   
